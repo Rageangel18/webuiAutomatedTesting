@@ -1,24 +1,21 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using Xunit;
 
 namespace WebUi_automated_testing.Test_Cases
 {
-    [Parallelizable]
-    [TestFixture]
-    [Category("TestCategory")]
-    public class TestCase3
+    public class TestCase3 : IDisposable
     {
         private IWebDriver? _driver;
 
-        [SetUp]
-        public void Setup()
+        public TestCase3()
         {
             _driver = new ChromeDriver();
             _driver.Manage().Window.Maximize();
         }
 
-        [TestCase("https://en.ehu.lt/", "LT", "https://lt.ehu.lt/", "Kodėl EHU?\r\nKas daro EHU unikaliu?")]
+        [Theory]
+        [InlineData("https://en.ehu.lt/", "LT", "https://lt.ehu.lt/", "Kodėl EHU?\r\nKas daro EHU unikaliu?")]
         public void VerifyLanguageChangeToLithuanian(string url, string languageLinkText, string expectedUrlContains, string expectedHeader)
         {
             _driver.Navigate().GoToUrl(url);
@@ -28,14 +25,13 @@ namespace WebUi_automated_testing.Test_Cases
             IWebElement lithuanianOption = _driver.FindElement(By.LinkText(languageLinkText));
             lithuanianOption.Click();
 
-            Assert.That(_driver.Url, Does.Contain(expectedUrlContains));
+            Assert.Contains(expectedUrlContains, _driver.Url);
 
             IWebElement header = _driver.FindElement(By.TagName("h1"));
-            Assert.That(header.Text, Does.Contain(expectedHeader));
+            Assert.Contains(expectedHeader, header.Text);
         }
 
-        [TearDown]
-        public void TearDown()
+        public void Dispose()
         {
             _driver.Quit();
         }

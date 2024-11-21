@@ -1,24 +1,21 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using Xunit;
 
 namespace WebUi_automated_testing.Test_Cases
 {
-    [Parallelizable]
-    [TestFixture]
-    [Category("TestCategory")]
-    public class TestCase2
+    public class TestCase2 : IDisposable
     {
         private IWebDriver? _driver;
 
-        [SetUp]
-        public void Setup()
+        public TestCase2()
         {
             _driver = new ChromeDriver();
             _driver.Manage().Window.Maximize();
         }
 
-        [TestCase("https://en.ehu.lt/", "study programs", "https://en.ehu.lt/?s=study%20programs", "search-filter__result-count", "results found.")]
+        [Theory]
+        [InlineData("https://en.ehu.lt/", "study programs", "https://en.ehu.lt/?s=study%20programs", "search-filter__result-count", "results found.")]
         public void Test2(string url, string searchTerm, string expectedUrl, string resultClass, string expectedText)
         {
             _driver.Navigate().GoToUrl(url);
@@ -26,14 +23,14 @@ namespace WebUi_automated_testing.Test_Cases
             string searchUrl = $"https://en.ehu.lt/?s={Uri.EscapeDataString(searchTerm)}";
             _driver.Navigate().GoToUrl(searchUrl);
 
-            Assert.That(_driver.Url, Is.EqualTo(expectedUrl));
+            Assert.Equal(expectedUrl, _driver.Url);
 
             IWebElement searchResults = _driver.FindElement(By.ClassName(resultClass));
-            Assert.That(searchResults.Text, Does.Contain(expectedText));
+            Assert.Contains(expectedText, searchResults.Text);
         }
 
-        [TearDown]
-        public void TearDown()
+        // IDisposable implementation to replace [TearDown]
+        public void Dispose()
         {
             _driver.Quit();
         }
