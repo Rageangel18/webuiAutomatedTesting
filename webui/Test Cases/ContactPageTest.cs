@@ -1,36 +1,38 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
+using WebUi_automated_testing.PageObjects;
+using WebUi_automated_testing.Utilities;
 
 namespace WebUi_automated_testing.Test_Cases
 {
-    [Parallelizable]
     [TestFixture]
+    [Parallelizable]
     [Category("ContactPage")]
-    public class TestCase4
+    public class ContactPageTests
     {
         private IWebDriver _driver;
 
         [SetUp]
         public void Setup()
         {
-            _driver = new ChromeDriver();
-            _driver.Manage().Window.Maximize();
+            _driver = DriverSingleton.GetDriver();
         }
 
         [TestCase("https://en.ehu.lt/contact/", "franciskscarynacr@gmail.com")]
         [TestCase("https://en.ehu.lt/contact/", "+370 68 771365")]
         [TestCase("https://en.ehu.lt/contact/", "+375 29 5781488")]
-        public void Test4(string url, string expectedText)
+        public void VerifyContactInfo(string url, string expectedText)
         {
-            _driver.Navigate().GoToUrl(url);
-            Assert.That(_driver.PageSource, Does.Contain(expectedText));
+            var contactPage = new ContactPage(_driver);
+            contactPage.NavigateTo(url);
+
+            Assert.That(contactPage.IsTextPresent(expectedText));
         }
 
         [TearDown]
         public void TearDown()
         {
-            _driver.Quit();
+            DriverSingleton.QuitDriver();
         }
     }
 }
