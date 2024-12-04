@@ -3,6 +3,8 @@ using WebUi_automated_testing.PageObjects;
 using WebUi_automated_testing.Utilities;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using Serilog;
+using FluentAssertions;
 
 namespace WebUi_automated_testing.Test_Cases
 {
@@ -15,7 +17,9 @@ namespace WebUi_automated_testing.Test_Cases
         [SetUp]
         public void Setup()
         {
+            LoggerSetup.ConfigureLogger();
             _driver = DriverSingleton.GetDriver();
+            Log.Information("Test started");
         }
 
         [Test]
@@ -27,21 +31,30 @@ namespace WebUi_automated_testing.Test_Cases
                 .WithExpectedTitle("About")
                 .Build();
 
+            Log.Information("Navigating to URL: {Url}", testData.Url);
             _driver.Navigate().GoToUrl(testData.Url);
 
+            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
 
-            ((IJavaScriptExecutor)_driver).ExecuteScript("window.scrollTo(0, document.body.scrollHeight);"); // Вкратце. Может быть я дебил, а может со страницей и ее футером реально чтото не так, либо это чисто у меня.
-                                                                                                             // Тест не долистывал страницу до кнопки about и фейлился. Поэтому оставил тут заглушку в виде JS скрипта.
-
-
-            var aboutLink = _driver.FindElement(By.LinkText(testData.LinkText));
-
-            var actions = new Actions(_driver);
-            actions.MoveToElement(aboutLink).Click().Perform();
-
-            Assert.That(_driver.Title, Is.EqualTo(testData.ExpectedTitle));
+            Log.Information("Clicking on 'About' link...");
             var aboutPage = new AboutPage(_driver);
-            Assert.That(aboutPage.GetHeaderText(), Does.Contain(testData.ExpectedTitle));
+            aboutPage.ClickAbout();
+
+            try
+            {
+                Log.Information("Checking page title...");
+                _driver.Title.Should().Be(testData.ExpectedTitle);
+
+                Log.Information("Checking header text...");
+                aboutPage.GetHeaderText().Should().Contain(testData.ExpectedTitle);
+
+                Log.Information("Test passed: AboutPageTest");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Test failed: {Message}", ex.Message);
+                throw;
+            }
         }
 
         [TearDown]

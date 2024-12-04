@@ -2,6 +2,8 @@
 using WebUi_automated_testing.PageObjects;
 using WebUi_automated_testing.Utilities;
 using OpenQA.Selenium;
+using FluentAssertions;
+using Serilog;
 
 namespace WebUi_automated_testing.Test_Cases
 {
@@ -11,8 +13,11 @@ namespace WebUi_automated_testing.Test_Cases
 
         public LanguageSwitcherTest()
         {
-            _driver = DriverSingleton.GetDriver();
+            LoggerSetup.ConfigureLogger();
+            Log.Information("Test started: LanguageSwitcherTest");
 
+            _driver = DriverSingleton.GetDriver();
+            Log.Information("Driver initialized.");
         }
 
         [Fact]
@@ -25,17 +30,24 @@ namespace WebUi_automated_testing.Test_Cases
                 .WithExpectedHeader("Kodėl EHU?\r\nKas daro EHU unikaliu?")
                 .Build();
 
+            Log.Information("Navigating to URL: {Url}", testData.Url);
             _driver.Navigate().GoToUrl(testData.Url);
 
             var languageSwitcherPage = new LanguageSwitcherPage(_driver);
+
+            Log.Information("Switching to Lithuanian language.");
             languageSwitcherPage.SwitchToLithuanian();
 
-            Assert.Contains(testData.ExpectedUrlContains, _driver.Url);
-            Assert.Contains(testData.ExpectedHeader, languageSwitcherPage.GetCurrentHeader());
+            Log.Information("Verifying the URL contains: {ExpectedUrl}", testData.ExpectedUrlContains);
+            _driver.Url.Should().Contain(testData.ExpectedUrlContains, "because the page URL should contain the Lithuanian version.");
+
+            Log.Information("Verifying the header contains: {ExpectedHeader}", testData.ExpectedHeader);
+            languageSwitcherPage.GetCurrentHeader().Should().Contain(testData.ExpectedHeader, "because the header should contain the expected Lithuanian text.");
         }
 
         public void Dispose()
         {
+            Log.Information("Test completed: LanguageSwitcherTest");
             DriverSingleton.QuitDriver();
         }
     }
