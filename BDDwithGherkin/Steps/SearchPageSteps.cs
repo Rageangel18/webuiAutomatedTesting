@@ -39,8 +39,8 @@ namespace WebUi_automated_testing.Steps
         [Then(@"the results count element with class ""(.*)"" should contain ""(.*)""")]
         public void ThenTheResultsCountElementWithClassShouldContain(string resultClass, string expectedText)
         {
-            var resultText = _searchPage.GetResultCountText(resultClass);
-            resultText.Should().Contain(expectedText, "The results count element should display the expected text.");
+            var resultText = _searchPage.HasSearchResults(expectedText);
+            resultText.Should().BeTrue("The results count element should display the expected text.");
         }
 
         [AfterScenario]

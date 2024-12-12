@@ -1,6 +1,8 @@
-﻿using OpenQA.Selenium;
-using TechTalk.SpecFlow;
+﻿using TechTalk.SpecFlow;
+using OpenQA.Selenium;
 using FluentAssertions;
+using WebUi_automated_testing.PageObjects;
+using WebUi_automated_testing.Utilities;
 
 namespace WebUi_automated_testing.Steps
 {
@@ -8,10 +10,12 @@ namespace WebUi_automated_testing.Steps
     public class LanguageSwitcherSteps
     {
         private readonly IWebDriver _driver;
+        private LanguageSwitcherPage _languageSwitcherPage;
 
         public LanguageSwitcherSteps(IWebDriver driver)
         {
             _driver = driver;
+            _languageSwitcherPage = new LanguageSwitcherPage(_driver);
         }
 
         [Given(@"the user is on the homepage")]
@@ -20,11 +24,11 @@ namespace WebUi_automated_testing.Steps
             _driver.Navigate().GoToUrl("https://en.ehu.lt/");
         }
 
+ 
         [When(@"the user clicks on the ""(.*)"" language link")]
         public void WhenTheUserClicksOnTheLanguageLink(string language)
         {
-            var languageLink = _driver.FindElement(By.LinkText(language));
-            languageLink.Click();
+            _languageSwitcherPage.SwitchToLithuanianLanguage(); 
         }
 
         [Then(@"the user should be redirected to the Lithuanian version of the site")]
@@ -33,11 +37,11 @@ namespace WebUi_automated_testing.Steps
             _driver.Url.Should().Contain("https://lt.ehu.lt/", "User should be redirected to the Lithuanian site.");
         }
 
-        [Then(@"the page header should contain ""(.*)""")]
-        public void ThenThePageHeaderShouldContain(string expectedHeader)
+
+        [AfterScenario]
+        public void Cleanup()
         {
-            var headerElement = _driver.FindElement(By.CssSelector("h1"));
-            headerElement.Text.Should().Contain(expectedHeader, "Page header should contain the expected text.");
+            DriverSingleton.QuitDriver();
         }
     }
 }

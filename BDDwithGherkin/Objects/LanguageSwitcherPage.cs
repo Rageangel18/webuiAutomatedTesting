@@ -11,16 +11,15 @@ namespace WebUi_automated_testing.PageObjects
             _driver = driver;
         }
 
-        public void SwitchLanguage(string language)
-        {
-            var languageLink = _driver.FindElement(By.LinkText(language));
-            languageLink.Click();
-        }
+        private readonly By LanguageSwitchButton = By.CssSelector(".language-switcher");
+        private readonly By LithuanianLanguageButton = By.LinkText("LT");
 
-        public string GetCurrentHeader()
+
+        public void SwitchToLithuanianLanguage()
         {
-            var headerElement = _driver.FindElement(By.CssSelector("h1"));
-            return headerElement.Text;
+            _driver.FindElement(LanguageSwitchButton).Click();
+
+            _driver.FindElement(LithuanianLanguageButton).Click();
         }
     }
 }

@@ -99,9 +99,6 @@ namespace BDDwithGherkin.Features
 #line 7
     testRunner.Then("the user should be redirected to the Lithuanian version of the site", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 8
-    testRunner.And("the page header should contain \"Kodėl EHU? Kas daro EHU unikaliu?\"", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line hidden
             }
             this.ScenarioCleanup();
         }

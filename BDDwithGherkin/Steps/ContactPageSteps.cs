@@ -18,24 +18,17 @@ namespace WebUi_automated_testing.Steps
             _contactPage = new ContactPage(_driver);
         }
 
-        [Given(@"the user is on the contact page")]
-        public void GivenTheUserIsOnTheContactPage()
+        [Given(@"the user navigates to ""(.*)""")]
+        public void GivenTheUserNavigatesTo(string url)
         {
-            _driver.Navigate().GoToUrl("https://en.ehu.lt/contact/");
+            _driver.Navigate().GoToUrl(url);
         }
 
-        [Then(@"the user should see the email ""(.*)"" on the page")]
-        public void ThenTheUserShouldSeeTheEmailOnThePage(string expectedEmail)
+        [Then(@"the user should see the contact information ""(.*)""")]
+        public void ThenTheUserShouldSeeTheContactInformation(string expectedText)
         {
-            Assert.IsTrue(_contactPage.GetPageSource().Contains(expectedEmail));
+            Assert.IsTrue(_contactPage.GetPageSource().Contains(expectedText), $"Expected text '{expectedText}' not found on the page.");
         }
-
-        [Then(@"the user should see the phone number ""(.*)"" on the page")]
-        public void ThenTheUserShouldSeeThePhoneNumberOnThePage(string expectedPhoneNumber)
-        {
-            Assert.IsTrue(_contactPage.GetPageSource().Contains(expectedPhoneNumber));
-        }
-
 
         [AfterScenario]
         public void Cleanup()

@@ -1,4 +1,6 @@
 ﻿using OpenQA.Selenium;
+using System;
+using System.Linq;
 
 namespace WebUi_automated_testing.PageObjects
 {
@@ -11,18 +13,26 @@ namespace WebUi_automated_testing.PageObjects
             _driver = driver;
         }
 
+        private readonly By SearchButton = By.ClassName("header-search");
+        private readonly By SearchBar = By.CssSelector("input.form-control[name='s']");
+        private readonly By SearchResults = By.ClassName("search-filter__result-count");
+
+
         public void PerformSearch(string searchTerm)
         {
-            var searchBox = _driver.FindElement(By.Name("s"));
-            searchBox.Clear();
+            _driver.FindElement(SearchButton).Click();
+            var searchBox = _driver.FindElement(SearchBar);
             searchBox.SendKeys(searchTerm);
-            searchBox.Submit();
+
+            searchBox.SendKeys(Keys.Enter); 
         }
 
-        public string GetResultCountText(string resultClass)
-        {
-            var resultElement = _driver.FindElement(By.ClassName(resultClass));
-            return resultElement.Text;
+
+        public bool HasSearchResults(string expectedText) {
+
+            var searchResults = _driver.FindElements(SearchResults);
+
+            return searchResults.Any(result => result.Text.Contains(expectedText, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

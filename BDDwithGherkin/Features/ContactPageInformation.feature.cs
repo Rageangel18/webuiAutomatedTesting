@@ -96,10 +96,10 @@ namespace BDDwithGherkin.Features
             {
                 this.ScenarioStart();
 #line 4
-    testRunner.Given(string.Format("the user navigates to \"{0}\"", uRL), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+        testRunner.Given(string.Format("the user navigates to \"{0}\"", uRL), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 5
-    testRunner.Then(string.Format("the user should see the contact information \"{0}\"", expectedText), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+        testRunner.Then(string.Format("the user should see the contact information \"{0}\"", expectedText), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();
